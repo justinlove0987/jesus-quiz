@@ -39,6 +39,26 @@
       overflow-x: hidden;
     }
 
+    /* 魔王關：整體氛圍變暗、偏紅紫，帶一點不祥綠 */
+    body.boss{
+      background:
+        radial-gradient(1100px 700px at 18% 12%, rgba(255,40,60,.26), transparent 62%),
+        radial-gradient(900px 600px at 82% 18%, rgba(170,60,255,.20), transparent 62%),
+        radial-gradient(1000px 700px at 50% 120%, rgba(0,255,135,.10), transparent 60%),
+        linear-gradient(180deg, #04030a, #09010f 55%, #050512);
+    }
+    body.boss .card{
+      border-color: rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.05));
+      box-shadow: 0 22px 60px rgba(0,0,0,.45);
+    }
+    body.boss button.primary{
+      background: linear-gradient(135deg, rgba(255,40,60,.34), rgba(170,60,255,.20));
+      border-color: rgba(255,255,255,.22);
+    }
+    body.boss .lights{ opacity: .70; }
+    body.boss .sub{ color: rgba(255,255,255,.66); }
+
     .snow{
       position: fixed;
       inset: 0;
@@ -57,6 +77,7 @@
       0%   { transform: translateY(-6%); }
       100% { transform: translateY(6%); }
     }
+    body.boss .snow{ opacity: .42; }
 
     .wrap{
       min-height: 100%;
@@ -80,9 +101,11 @@
       align-items: center;
       gap: 12px;
       margin-bottom: 14px;
+      user-select: none;
+      touch-action: manipulation;
+      cursor: default;
     }
 
-    /* 標題旁只保留樹，不要外框 */
     .treeIcon{
       width: 34px;
       height: 34px;
@@ -101,6 +124,12 @@
       font-size: 20px;
       letter-spacing: .4px;
     }
+    /* 讓標題更像可互動區塊（雙擊） */
+    #stage-title{
+      display: inline-block;
+      padding: 2px 0;
+    }
+
     .sub{
       margin: 6px 0 0;
       color: var(--muted);
@@ -140,7 +169,6 @@
       color: rgba(255,255,255,.78);
     }
 
-    /* 答對頁按鈕：繽紛節慶感 */
     button.primaryFestive{
       background: linear-gradient(135deg,
         rgba(255,77,77,.36),
@@ -161,6 +189,17 @@
         rgba(0,255,135,.26),
         rgba(120,140,255,.24)
       );
+    }
+
+    /* 魔王關：成功頁按鈕更像「闖關」 */
+    body.boss button.primaryFestive{
+      background: linear-gradient(135deg,
+        rgba(255,40,60,.38),
+        rgba(255,209,102,.18),
+        rgba(170,60,255,.22),
+        rgba(0,255,135,.12)
+      );
+      border-color: rgba(255,255,255,.20);
     }
 
     .hintBox{
@@ -221,7 +260,6 @@
       color: rgba(255,255,255,.88);
     }
 
-    /* 答對頁：繽紛聖誕節氛圍 */
     .successHero{
       margin-top: 14px;
       padding: 18px;
@@ -239,6 +277,18 @@
         0 18px 46px rgba(0,0,0,.30),
         0 0 0 1px rgba(255,255,255,.06);
     }
+
+    /* 魔王關成功頁：更暗、更有「擊敗魔王」感 */
+    body.boss .successHero{
+      background:
+        radial-gradient(740px 340px at 18% 20%, rgba(255,40,60,.26), transparent 62%),
+        radial-gradient(620px 300px at 82% 30%, rgba(170,60,255,.20), transparent 62%),
+        radial-gradient(620px 300px at 55% 0%, rgba(255,209,102,.14), transparent 62%),
+        radial-gradient(700px 360px at 55% 115%, rgba(0,255,135,.12), transparent 65%),
+        linear-gradient(180deg, rgba(6,6,14,.84), rgba(6,6,14,.52));
+      border-color: rgba(255,255,255,.16);
+    }
+
     .successHero::before{
       content:"";
       position:absolute;
@@ -255,6 +305,8 @@
       filter: blur(.2px);
       pointer-events:none;
     }
+    body.boss .successHero::before{ opacity: .42; }
+
     .successHero > *{ position: relative; z-index: 1; }
 
     .successTitle{
@@ -272,7 +324,6 @@
       line-height: 1.7;
     }
 
-    /* 成功提示條：綠色語意，但低調精緻 */
     .successBadge{
       margin-top: 12px;
       padding: 10px 12px;
@@ -298,6 +349,13 @@
         radial-gradient(520px 220px at 80% 40%, rgba(0,255,135,.10), transparent 62%),
         radial-gradient(520px 220px at 55% 0%, rgba(255,209,102,.10), transparent 62%),
         linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    }
+    body.boss .hintBox.successHint{
+      background:
+        radial-gradient(520px 220px at 20% 30%, rgba(255,40,60,.10), transparent 62%),
+        radial-gradient(520px 220px at 80% 40%, rgba(170,60,255,.10), transparent 62%),
+        radial-gradient(520px 220px at 55% 0%, rgba(255,209,102,.08), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.05));
     }
 
     .footerNote{
@@ -338,7 +396,7 @@
 
   <main class="wrap">
     <div class="card" role="application" aria-label="聖誕小問答">
-      <div class="brand">
+      <div class="brand" id="brand">
         <div class="treeIcon" aria-hidden="true">
           <svg viewBox="0 0 64 64" aria-hidden="true">
             <polygon
@@ -351,8 +409,8 @@
           </svg>
         </div>
         <div>
-          <h1>聖誕小問答</h1>
-          <p class="sub">按下開始後會出現提示詞，請輸入正確答案。</p>
+          <h1 id="stage-title">聖誕小問答</h1>
+          <p class="sub" id="stage-sub">按下開始後會出現提示詞，請輸入正確答案。</p>
           <div class="lights" aria-hidden="true"></div>
         </div>
       </div>
@@ -361,7 +419,7 @@
         <div class="btnRow">
           <button id="btn-start" class="primary" type="button">開始</button>
         </div>
-        <p class="footerNote">提示：提示詞會在第一次開始時抽一次，之後不會變。</p>
+        <p class="footerNote" id="stage-footnote">提示：提示詞會在第一次開始時抽一次，之後不會變。</p>
       </section>
 
       <section id="screen-quiz" class="section" aria-label="問答頁">
@@ -384,7 +442,7 @@
       <section id="screen-success" class="section" aria-label="答對頁">
         <div class="successHero">
           <h2 class="successTitle">答對了</h2>
-          <p class="successText">願你在這個季節裡有平安與喜樂。聖誕快樂。</p>
+          <p class="successText" id="success-text">願你在這個季節裡有平安與喜樂。聖誕快樂。</p>
 
           <div class="successBadge" role="status" aria-live="polite">
             成功提示：你輸入的答案<strong>正確</strong>。
@@ -400,25 +458,56 @@
           <button id="btn-restart" class="primaryFestive" type="button">再玩一次 - 提示詞不變</button>
         </div>
 
-        <p class="footerNote">提示詞不會變。如需改成每次開始都重新抽，我也可以直接幫你改規則。</p>
+        <p class="footerNote">提示詞不會變。</p>
       </section>
     </div>
   </main>
 
   <script>
-    // 提示詞：顯示中文並註記英文
-    const HINTS = [
-      { zh: "容器", en: "Vessel" },
-      { zh: "耶穌", en: "Jesus" },
-      { zh: "誕生", en: "Birth" }
-    ];
+    // ====== 兩關設定 ======
+    const STAGE_KEY = "christmas_stage_v1";
+    const STAGES = {
+      1: {
+        title: "聖誕小問答",
+        sub: "按下開始後會出現提示詞，請輸入正確答案。",
+        footnote: "提示：提示詞會在第一次開始時抽一次，之後不會變。",
+        bodyClass: "",
+        // 提示：中文加英文註記
+        hints: [
+          { zh: "容器", en: "Vessel" },
+          { zh: "耶穌", en: "Jesus" },
+          { zh: "誕生", en: "Birth" }
+        ],
+        // 答案：中文或英文皆可
+        answerZh: "馬槽",
+        answersEn: ["manger"],
+        // storage：保留舊 key 相容
+        storageKeys: {
+          legacyHint: "christmas_quiz_hint_v1",
+          hint: "christmas_quiz_hint_stage1_v1"
+        },
+        successText: "願你在這個季節裡有平安與喜樂。聖誕快樂。"
+      },
+      2: {
+        title: "聖誕魔王關",
+        sub: "魔王已現身。用提示詞找出答案。",
+        footnote: "提示：提示詞會在第一次開始時抽一次，之後不會變。",
+        bodyClass: "boss",
+        hints: [
+          { zh: "十字架", en: "Cross" },
+          { zh: "耶穌", en: "Jesus" },
+          { zh: "三天", en: "Three Days" }
+        ],
+        answerZh: "復活",
+        answersEn: ["resurrection", "resurrect", "resurrected", "rise again"],
+        storageKeys: {
+          hint: "christmas_quiz_hint_stage2_v1"
+        },
+        successText: "你闖過了魔王關。願你在聖誕裡得著平安與盼望。"
+      }
+    };
 
-    // 答案：中文或英文皆可
-    const ANSWER_ZH = "馬槽";
-    const ANSWER_EN = "manger";
-
-    const STORAGE_KEY = "christmas_quiz_hint_v1";
-
+    // ====== DOM ======
     const screenStart = document.getElementById("screen-start");
     const screenQuiz = document.getElementById("screen-quiz");
     const screenSuccess = document.getElementById("screen-success");
@@ -434,6 +523,24 @@
     const input = document.getElementById("answer-input");
     const msgWrong = document.getElementById("msg-wrong");
 
+    const stageTitleEl = document.getElementById("stage-title");
+    const stageSubEl = document.getElementById("stage-sub");
+    const stageFootnoteEl = document.getElementById("stage-footnote");
+    const successTextEl = document.getElementById("success-text");
+    const brandEl = document.getElementById("brand");
+
+    // ====== 狀態 ======
+    function getStage(){
+      const v = Number(localStorage.getItem(STAGE_KEY) || "1");
+      return v === 2 ? 2 : 1;
+    }
+    function setStage(v){
+      localStorage.setItem(STAGE_KEY, String(v));
+    }
+
+    let currentStage = getStage();
+
+    // ====== UI ======
     function showScreen(which){
       screenStart.classList.remove("active");
       screenQuiz.classList.remove("active");
@@ -441,26 +548,64 @@
       which.classList.add("active");
     }
 
-    function getOrCreateHintZh(){
-      const saved = localStorage.getItem(STORAGE_KEY);
+    function applyStage(stage){
+      const cfg = STAGES[stage];
+      stageTitleEl.textContent = cfg.title;
+      stageSubEl.textContent = cfg.sub;
+      stageFootnoteEl.textContent = cfg.footnote;
+      successTextEl.textContent = cfg.successText;
 
-      // 相容舊版：如果存的是「容器 / 耶穌 / 誕生」，直接沿用
-      if (saved && HINTS.some(h => h.zh === saved)) return saved;
+      document.body.classList.remove("boss");
+      if (cfg.bodyClass) document.body.classList.add(cfg.bodyClass);
 
-      const picked = HINTS[Math.floor(Math.random() * HINTS.length)].zh;
-      localStorage.setItem(STORAGE_KEY, picked);
+      // 進入新關卡時，回到開始頁
+      resetUIForQuiz();
+      renderHint(); // 如果之前已經抽過，直接顯示目前的提示詞
+      showScreen(screenStart);
+    }
+
+    // ====== 提示詞：每關各自抽一次，之後固定 ======
+    function getHintKeyForStage(stage){
+      return STAGES[stage].storageKeys.hint;
+    }
+
+    function normalizeSpaces(s){
+      return (s || "").trim().replace(/\s+/g, " ");
+    }
+
+    function pickHintZh(stage){
+      const cfg = STAGES[stage];
+
+      // stage 1：相容舊 key
+      if (stage === 1) {
+        const legacy = localStorage.getItem(cfg.storageKeys.legacyHint);
+        if (legacy && cfg.hints.some(h => h.zh === legacy)) {
+          localStorage.setItem(cfg.storageKeys.hint, legacy);
+          return legacy;
+        }
+      }
+
+      const key = getHintKeyForStage(stage);
+      const saved = localStorage.getItem(key);
+      if (saved && cfg.hints.some(h => h.zh === saved)) return saved;
+
+      const picked = cfg.hints[Math.floor(Math.random() * cfg.hints.length)].zh;
+      localStorage.setItem(key, picked);
       return picked;
     }
 
-    function formatHint(zh){
-      const item = HINTS.find(h => h.zh === zh);
+    function formatHint(stage, zh){
+      const cfg = STAGES[stage];
+      const item = cfg.hints.find(h => h.zh === zh);
       if (!item) return "—";
       return `${item.zh}(${item.en})`;
     }
 
     function renderHint(){
-      const zh = localStorage.getItem(STORAGE_KEY) || "—";
-      const text = zh === "—" ? "—" : formatHint(zh);
+      const cfg = STAGES[currentStage];
+      const key = getHintKeyForStage(currentStage);
+      const saved = localStorage.getItem(key) || (currentStage === 1 ? localStorage.getItem(cfg.storageKeys.legacyHint) : null);
+      const text = saved ? formatHint(currentStage, saved) : "—";
       hintWord.textContent = text;
       hintWordSuccess.textContent = text;
     }
@@ -470,25 +615,33 @@
       input.value = "";
     }
 
-    function isCorrectAnswer(raw){
-      const v = (raw || "").trim();
-      if (!v) return false;
-
-      // 英文判斷：不分大小寫，允許 a/an/the + manger
-      if (/[a-zA-Z]/.test(v)) {
-        let s = v.toLowerCase().trim().replace(/\s+/g, " ");
-        s = s.replace(/^[\.\,\!\?\s]+/, "").replace(/[\.\,\!\?\s]+$/, "");
-        s = s.replace(/^(a|an|the)\s+/, "");
-        return s === ANSWER_EN;
-      }
-
-      // 中文判斷：去空白
-      const zh = v.replace(/\s+/g, "");
-      return zh === ANSWER_ZH;
+    // ====== 答案判斷：每關各自中文或英文皆可 ======
+    function stripPunctuationEdges(s){
+      return (s || "").replace(/^[\.\,\!\?\s]+/, "").replace(/[\.\,\!\?\s]+$/, "");
     }
 
+    function isCorrectAnswer(stage, raw){
+      const cfg = STAGES[stage];
+      const v = normalizeSpaces(raw);
+      if (!v) return false;
+
+      // 英文：不分大小寫，允許 a/an/the + answer
+      if (/[a-zA-Z]/.test(v)) {
+        let s = stripPunctuationEdges(v.toLowerCase());
+        s = s.replace(/^(a|an|the)\s+/, "");
+
+        // 多字答案（例如 rise again）也要能匹配
+        return cfg.answersEn.some(ans => s === normalizeSpaces(ans.toLowerCase()));
+      }
+
+      // 中文：去空白
+      const zh = v.replace(/\s+/g, "");
+      return zh === cfg.answerZh;
+    }
+
+    // ====== 行為 ======
     btnStart.addEventListener("click", () => {
-      getOrCreateHintZh();
+      pickHintZh(currentStage);
       renderHint();
       resetUIForQuiz();
       showScreen(screenQuiz);
@@ -500,7 +653,7 @@
     });
 
     function submitAnswer(){
-      if (isCorrectAnswer(input.value)) {
+      if (isCorrectAnswer(currentStage, input.value)) {
         renderHint();
         showScreen(screenSuccess);
         return;
@@ -521,6 +674,35 @@
       showScreen(screenQuiz);
       setTimeout(() => input.focus(), 50);
     });
+
+    // ====== 進入下一關：雙擊標題區域 ======
+    function goToStage2(){
+      if (currentStage !== 1) return; // 總共只有兩關，第二關不再往下
+      currentStage = 2;
+      setStage(2);
+      applyStage(2);
+    }
+
+    // 桌面：dblclick
+    stageTitleEl.addEventListener("dblclick", goToStage2);
+    brandEl.addEventListener("dblclick", goToStage2);
+
+    // 行動裝置：雙點擊容錯（避免某些瀏覽器不觸發 dblclick）
+    let lastTap = 0;
+    function handleDoubleTap(){
+      const now = Date.now();
+      if (now - lastTap < 350) {
+        lastTap = 0;
+        goToStage2();
+        return;
+      }
+      lastTap = now;
+    }
+    stageTitleEl.addEventListener("click", handleDoubleTap);
+    brandEl.addEventListener("click", handleDoubleTap);
+
+    // ====== 初始化 ======
+    applyStage(currentStage);
   </script>
 </body>
 </html>
