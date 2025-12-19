@@ -14,8 +14,6 @@
       --line: rgba(255,255,255,.16);
 
       --goodStrong: #00FF87;
-      --goodLine: rgba(0,255,135,.45);
-
       --bad: #ff6b6b;
 
       --btn: rgba(255,255,255,.14);
@@ -56,6 +54,7 @@
       background: linear-gradient(135deg, rgba(255,40,60,.34), rgba(170,60,255,.20));
       border-color: rgba(255,255,255,.22);
     }
+    body.boss .snow{ opacity: .42; }
     body.boss .lights{ opacity: .70; }
     body.boss .sub{ color: rgba(255,255,255,.66); }
 
@@ -77,7 +76,6 @@
       0%   { transform: translateY(-6%); }
       100% { transform: translateY(6%); }
     }
-    body.boss .snow{ opacity: .42; }
 
     .wrap{
       min-height: 100%;
@@ -124,11 +122,7 @@
       font-size: 20px;
       letter-spacing: .4px;
     }
-    /* 讓標題更像可互動區塊（雙擊） */
-    #stage-title{
-      display: inline-block;
-      padding: 2px 0;
-    }
+    #stage-title{ display: inline-block; padding: 2px 0; }
 
     .sub{
       margin: 6px 0 0;
@@ -169,6 +163,7 @@
       color: rgba(255,255,255,.78);
     }
 
+    /* 成功頁按鈕：節慶感 */
     button.primaryFestive{
       background: linear-gradient(135deg,
         rgba(255,77,77,.36),
@@ -190,8 +185,6 @@
         rgba(120,140,255,.24)
       );
     }
-
-    /* 魔王關：成功頁按鈕更像「闖關」 */
     body.boss button.primaryFestive{
       background: linear-gradient(135deg,
         rgba(255,40,60,.38),
@@ -277,8 +270,6 @@
         0 18px 46px rgba(0,0,0,.30),
         0 0 0 1px rgba(255,255,255,.06);
     }
-
-    /* 魔王關成功頁：更暗、更有「擊敗魔王」感 */
     body.boss .successHero{
       background:
         radial-gradient(740px 340px at 18% 20%, rgba(255,40,60,.26), transparent 62%),
@@ -306,7 +297,6 @@
       pointer-events:none;
     }
     body.boss .successHero::before{ opacity: .42; }
-
     .successHero > *{ position: relative; z-index: 1; }
 
     .successTitle{
@@ -466,22 +456,20 @@
   <script>
     // ====== 兩關設定 ======
     const STAGE_KEY = "christmas_stage_v1";
+
     const STAGES = {
       1: {
         title: "聖誕小問答",
         sub: "按下開始後會出現提示詞，請輸入正確答案。",
         footnote: "提示：提示詞會在第一次開始時抽一次，之後不會變。",
         bodyClass: "",
-        // 提示：中文加英文註記
         hints: [
           { zh: "容器", en: "Vessel" },
           { zh: "耶穌", en: "Jesus" },
           { zh: "誕生", en: "Birth" }
         ],
-        // 答案：中文或英文皆可
         answerZh: "馬槽",
         answersEn: ["manger"],
-        // storage：保留舊 key 相容
         storageKeys: {
           legacyHint: "christmas_quiz_hint_v1",
           hint: "christmas_quiz_hint_stage1_v1"
@@ -529,7 +517,7 @@
     const successTextEl = document.getElementById("success-text");
     const brandEl = document.getElementById("brand");
 
-    // ====== 狀態 ======
+    // ====== Stage state ======
     function getStage(){
       const v = Number(localStorage.getItem(STAGE_KEY) || "1");
       return v === 2 ? 2 : 1;
@@ -537,10 +525,9 @@
     function setStage(v){
       localStorage.setItem(STAGE_KEY, String(v));
     }
-
     let currentStage = getStage();
 
-    // ====== UI ======
+    // ====== UI helpers ======
     function showScreen(which){
       screenStart.classList.remove("active");
       screenQuiz.classList.remove("active");
@@ -548,8 +535,14 @@
       which.classList.add("active");
     }
 
+    function resetUIForQuiz(){
+      msgWrong.style.display = "none";
+      input.value = "";
+    }
+
     function applyStage(stage){
       const cfg = STAGES[stage];
+
       stageTitleEl.textContent = cfg.title;
       stageSubEl.textContent = cfg.sub;
       stageFootnoteEl.textContent = cfg.footnote;
@@ -558,25 +551,20 @@
       document.body.classList.remove("boss");
       if (cfg.bodyClass) document.body.classList.add(cfg.bodyClass);
 
-      // 進入新關卡時，回到開始頁
       resetUIForQuiz();
-      renderHint(); // 如果之前已經抽過，直接顯示目前的提示詞
+      renderHint();
       showScreen(screenStart);
     }
 
-    // ====== 提示詞：每關各自抽一次，之後固定 ======
+    // ====== Hint fixed per stage ======
     function getHintKeyForStage(stage){
       return STAGES[stage].storageKeys.hint;
-    }
-
-    function normalizeSpaces(s){
-      return (s || "").trim().replace(/\s+/g, " ");
     }
 
     function pickHintZh(stage){
       const cfg = STAGES[stage];
 
-      // stage 1：相容舊 key
+      // stage 1 相容舊 key
       if (stage === 1) {
         const legacy = localStorage.getItem(cfg.storageKeys.legacyHint);
         if (legacy && cfg.hints.some(h => h.zh === legacy)) {
@@ -604,18 +592,20 @@
     function renderHint(){
       const cfg = STAGES[currentStage];
       const key = getHintKeyForStage(currentStage);
-      const saved = localStorage.getItem(key) || (currentStage === 1 ? localStorage.getItem(cfg.storageKeys.legacyHint) : null);
+
+      const saved =
+        localStorage.getItem(key) ||
+        (currentStage === 1 ? localStorage.getItem(cfg.storageKeys.legacyHint) : null);
+
       const text = saved ? formatHint(currentStage, saved) : "—";
       hintWord.textContent = text;
       hintWordSuccess.textContent = text;
     }
 
-    function resetUIForQuiz(){
-      msgWrong.style.display = "none";
-      input.value = "";
+    // ====== Answer check ======
+    function normalizeSpaces(s){
+      return (s || "").trim().replace(/\s+/g, " ");
     }
-
-    // ====== 答案判斷：每關各自中文或英文皆可 ======
     function stripPunctuationEdges(s){
       return (s || "").replace(/^[\.\,\!\?\s]+/, "").replace(/[\.\,\!\?\s]+$/, "");
     }
@@ -629,8 +619,6 @@
       if (/[a-zA-Z]/.test(v)) {
         let s = stripPunctuationEdges(v.toLowerCase());
         s = s.replace(/^(a|an|the)\s+/, "");
-
-        // 多字答案（例如 rise again）也要能匹配
         return cfg.answersEn.some(ans => s === normalizeSpaces(ans.toLowerCase()));
       }
 
@@ -639,7 +627,7 @@
       return zh === cfg.answerZh;
     }
 
-    // ====== 行為 ======
+    // ====== Behavior ======
     btnStart.addEventListener("click", () => {
       pickHintZh(currentStage);
       renderHint();
@@ -663,7 +651,6 @@
     }
 
     btnSubmit.addEventListener("click", submitAnswer);
-
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") submitAnswer();
     });
@@ -675,33 +662,40 @@
       setTimeout(() => input.focus(), 50);
     });
 
-    // ====== 進入下一關：雙擊標題區域 ======
-    function goToStage2(){
-      if (currentStage !== 1) return; // 總共只有兩關，第二關不再往下
-      currentStage = 2;
-      setStage(2);
-      applyStage(2);
+    // ====== 三下點擊切換關卡（可來回切換） ======
+    function toggleStage(){
+      currentStage = (currentStage === 1) ? 2 : 1;
+      setStage(currentStage);
+      applyStage(currentStage);
     }
 
-    // 桌面：dblclick
-    stageTitleEl.addEventListener("dblclick", goToStage2);
-    brandEl.addEventListener("dblclick", goToStage2);
+    function bindTripleClick(el){
+      let count = 0;
+      let timer = null;
 
-    // 行動裝置：雙點擊容錯（避免某些瀏覽器不觸發 dblclick）
-    let lastTap = 0;
-    function handleDoubleTap(){
-      const now = Date.now();
-      if (now - lastTap < 350) {
-        lastTap = 0;
-        goToStage2();
-        return;
-      }
-      lastTap = now;
+      el.addEventListener("click", () => {
+        count += 1;
+
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          count = 0;
+          timer = null;
+        }, 500);
+
+        if (count >= 3) {
+          if (timer) clearTimeout(timer);
+          count = 0;
+          timer = null;
+          toggleStage();
+        }
+      });
     }
-    stageTitleEl.addEventListener("click", handleDoubleTap);
-    brandEl.addEventListener("click", handleDoubleTap);
 
-    // ====== 初始化 ======
+    // 讓點標題或整個 brand 區域都能三下切換
+    bindTripleClick(stageTitleEl);
+    bindTripleClick(brandEl);
+
+    // ====== Init ======
     applyStage(currentStage);
   </script>
 </body>
