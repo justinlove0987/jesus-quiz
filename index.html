@@ -13,10 +13,9 @@
       --muted: rgba(255,255,255,.70);
       --line: rgba(255,255,255,.16);
 
-      /* 更「綠」的成功色系 */
-      --good: #00E676;          /* 明亮綠 */
-      --goodStrong: #00FF87;    /* 更亮的綠 */
-      --goodDeep: #062015;      /* 深綠底 */
+      --good: #00E676;
+      --goodStrong: #00FF87;
+      --goodDeep: #062015;
       --goodBg: rgba(0,255,135,.16);
       --goodBg2: rgba(0,230,118,.22);
       --goodLine: rgba(0,255,135,.55);
@@ -44,7 +43,6 @@
       overflow-x: hidden;
     }
 
-    /* 雪花（純 CSS） */
     .snow{
       position: fixed;
       inset: 0;
@@ -88,23 +86,17 @@
       margin-bottom: 14px;
     }
 
-    /* 1) 標題旁：更明顯的小聖誕樹（SVG），保證看起來有改 */
-    .badge{
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      background:
-        radial-gradient(22px 22px at 30% 25%, rgba(255,255,255,.18), transparent 60%),
-        linear-gradient(135deg, rgba(0,255,135,.18), rgba(255,77,77,.12));
-      border: 1px solid rgba(255,255,255,.18);
-      box-shadow: 0 12px 25px rgba(0,0,0,.28);
+    /* 標題旁只保留樹，不要外框 */
+    .treeIcon{
+      width: 34px;
+      height: 34px;
       display: grid;
       place-items: center;
-      overflow: hidden;
+      flex: 0 0 auto;
     }
-    .badge svg{
-      width: 30px;
-      height: 30px;
+    .treeIcon svg{
+      width: 34px;
+      height: 34px;
       filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
     }
 
@@ -152,17 +144,16 @@
       color: rgba(255,255,255,.78);
     }
 
-    /* 答對頁按鈕：更綠、更像成功操作 */
     button.primaryGreen{
-      background: linear-gradient(135deg, rgba(0,255,135,.36), rgba(0,230,118,.22));
-      border-color: rgba(0,255,135,.42);
+      background: linear-gradient(135deg, rgba(0,255,135,.42), rgba(0,230,118,.26));
+      border-color: rgba(0,255,135,.55);
       box-shadow:
-        0 14px 34px rgba(0,255,135,.14),
+        0 14px 34px rgba(0,255,135,.16),
         inset 0 0 0 1px rgba(255,255,255,.06);
     }
     button.primaryGreen:hover{
-      background: linear-gradient(135deg, rgba(0,255,135,.44), rgba(0,230,118,.28));
-      border-color: rgba(0,255,135,.55);
+      background: linear-gradient(135deg, rgba(0,255,135,.52), rgba(0,230,118,.32));
+      border-color: rgba(0,255,135,.70);
     }
 
     .hintBox{
@@ -223,20 +214,19 @@
       color: rgba(255,255,255,.88);
     }
 
-    /* 3) 答對頁：更綠（更強的綠色底、邊框、內光暈） */
     .successHero{
       margin-top: 14px;
       padding: 18px;
       border-radius: 18px;
       border: 1px solid var(--goodLine);
       background:
-        radial-gradient(700px 300px at 20% 25%, rgba(0,255,135,.34), transparent 60%),
-        radial-gradient(520px 240px at 85% 35%, rgba(0,230,118,.26), transparent 62%),
-        linear-gradient(180deg, rgba(6,32,21,.85), rgba(6,32,21,.55));
+        radial-gradient(700px 300px at 20% 25%, rgba(0,255,135,.38), transparent 60%),
+        radial-gradient(520px 240px at 85% 35%, rgba(0,255,135,.30), transparent 62%),
+        linear-gradient(180deg, rgba(6,32,21,.92), rgba(6,32,21,.62));
       box-shadow:
         0 18px 46px rgba(0,0,0,.30),
-        0 0 0 1px rgba(0,255,135,.16),
-        0 0 34px rgba(0,255,135,.12);
+        0 0 0 1px rgba(0,255,135,.18),
+        0 0 42px rgba(0,255,135,.14);
     }
     .successTitle{
       font-size: 22px;
@@ -253,30 +243,28 @@
       line-height: 1.7;
     }
 
-    /* 更綠的成功提示條 */
     .successBadge{
       margin-top: 12px;
       padding: 10px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(0,255,135,.60);
-      background: linear-gradient(180deg, rgba(0,255,135,.22), rgba(0,230,118,.14));
+      border: 1px solid rgba(0,255,135,.70);
+      background: linear-gradient(180deg, rgba(0,255,135,.26), rgba(0,255,135,.14));
       color: rgba(255,255,255,.92);
       font-size: 13px;
       line-height: 1.6;
       box-shadow:
         inset 0 0 0 1px rgba(255,255,255,.06),
-        0 10px 22px rgba(0,255,135,.10);
+        0 10px 22px rgba(0,255,135,.12);
     }
     .successBadge strong{
       color: var(--goodStrong);
       font-weight: 900;
     }
 
-    /* 成功頁的提示詞盒子也偏綠 */
     .hintBox.successHint{
-      border-color: rgba(0,255,135,.35);
+      border-color: rgba(0,255,135,.42);
       background:
-        radial-gradient(480px 220px at 20% 30%, rgba(0,255,135,.18), transparent 60%),
+        radial-gradient(480px 220px at 20% 30%, rgba(0,255,135,.22), transparent 60%),
         linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
     }
 
@@ -287,7 +275,6 @@
       line-height: 1.6;
     }
 
-    /* 燈串 */
     .lights{
       height: 10px;
       margin: 10px 0 0;
@@ -320,18 +307,14 @@
   <main class="wrap">
     <div class="card" role="application" aria-label="聖誕小問答">
       <div class="brand">
-        <div class="badge" aria-hidden="true">
-          <!-- 明顯的小聖誕樹 SVG -->
+        <div class="treeIcon" aria-hidden="true">
           <svg viewBox="0 0 64 64" aria-hidden="true">
-            <!-- 星星 -->
             <polygon
               points="32,6 35.5,15.5 45.5,16 37.8,22 40.6,31.6 32,26.2 23.4,31.6 26.2,22 18.5,16 28.5,15.5"
               fill="rgba(255,255,255,.92)"/>
-            <!-- 樹冠 -->
             <polygon points="32,14 16,30 48,30" fill="rgba(0,255,135,.95)"/>
             <polygon points="32,22 12,40 52,40" fill="rgba(0,255,135,.72)"/>
             <polygon points="32,30 8,52 56,52" fill="rgba(0,255,135,.55)"/>
-            <!-- 樹幹 -->
             <rect x="28" y="50" width="8" height="10" rx="2" fill="rgba(255,200,150,.60)"/>
           </svg>
         </div>
@@ -342,7 +325,6 @@
         </div>
       </div>
 
-      <!-- 開始頁 -->
       <section id="screen-start" class="section active" aria-label="開始頁">
         <div class="btnRow">
           <button id="btn-start" class="primary" type="button">開始</button>
@@ -350,7 +332,6 @@
         <p class="footerNote">提示：提示詞會在第一次開始時抽一次，整個流程都不會變。</p>
       </section>
 
-      <!-- 問答頁 -->
       <section id="screen-quiz" class="section" aria-label="問答頁">
         <div class="hintBox">
           <div class="hintTitle">提示詞</div>
@@ -368,7 +349,6 @@
         <div id="msg-wrong" class="msg bad" role="alert" aria-live="polite">答錯了，請再試一次。</div>
       </section>
 
-      <!-- 答對頁（2) 完全移除「重新抽提示詞」按鈕：HTML/JS/文案都移除） -->
       <section id="screen-success" class="section" aria-label="答對頁">
         <div class="successHero">
           <h2 class="successTitle">答對了</h2>
@@ -379,27 +359,25 @@
           </div>
 
           <div class="hintBox successHint" style="margin-top:14px;">
-            <div class="hintTitle">本次提示詞（整個流程固定）</div>
+            <div class="hintTitle">本次提示詞：整個流程固定</div>
             <div id="hint-word-success" class="hintWord" style="font-size:28px;">—</div>
           </div>
         </div>
 
         <div class="btnRow">
-          <button id="btn-restart" class="primaryGreen" type="button">再玩一次（保留提示詞）</button>
+          <button id="btn-restart" class="primaryGreen" type="button">再玩一次 - 提示詞不變</button>
         </div>
 
-        <p class="footerNote">提示詞固定不變；如需改成「每次開始都重新抽」，我也可以直接幫你改規則。</p>
+        <p class="footerNote">提示詞固定不變。如需改成每次開始都重新抽，我也可以直接幫你改規則。</p>
       </section>
     </div>
   </main>
 
   <script>
-    // ====== 設定 ======
     const HINTS = ["容器", "耶穌", "誕生"];
     const ANSWER = "馬槽";
     const STORAGE_KEY = "christmas_quiz_hint_v1";
 
-    // ====== DOM ======
     const screenStart = document.getElementById("screen-start");
     const screenQuiz = document.getElementById("screen-quiz");
     const screenSuccess = document.getElementById("screen-success");
@@ -415,7 +393,6 @@
     const input = document.getElementById("answer-input");
     const msgWrong = document.getElementById("msg-wrong");
 
-    // ====== 畫面切換 ======
     function showScreen(which){
       screenStart.classList.remove("active");
       screenQuiz.classList.remove("active");
@@ -423,7 +400,6 @@
       which.classList.add("active");
     }
 
-    // ====== 提示詞：抽一次，流程固定（localStorage 保證重整也不變） ======
     function getOrCreateHint(){
       let saved = localStorage.getItem(STORAGE_KEY);
       if (saved && HINTS.includes(saved)) return saved;
@@ -444,9 +420,8 @@
       input.value = "";
     }
 
-    // ====== 行為 ======
     btnStart.addEventListener("click", () => {
-      getOrCreateHint();   // 只在第一次開始時決定提示詞
+      getOrCreateHint();
       renderHint();
       resetUIForQuiz();
       showScreen(screenQuiz);
