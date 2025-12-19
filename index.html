@@ -13,10 +13,8 @@
       --muted: rgba(255,255,255,.70);
       --line: rgba(255,255,255,.16);
 
-      /* 成功語意：保留綠，但不要整片綠 */
       --goodStrong: #00FF87;
       --goodLine: rgba(0,255,135,.45);
-      --goodBg: rgba(0,255,135,.12);
 
       --bad: #ff6b6b;
 
@@ -84,6 +82,7 @@
       margin-bottom: 14px;
     }
 
+    /* 標題旁只保留樹，不要外框 */
     .treeIcon{
       width: 34px;
       height: 34px;
@@ -141,7 +140,7 @@
       color: rgba(255,255,255,.78);
     }
 
-    /* 答對頁按鈕：改成更繽紛的節慶感 */
+    /* 答對頁按鈕：繽紛節慶感 */
     button.primaryFestive{
       background: linear-gradient(135deg,
         rgba(255,77,77,.36),
@@ -179,7 +178,7 @@
     .hintWord{
       font-size: 34px;
       font-weight: 800;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       line-height: 1.1;
       text-shadow: 0 10px 30px rgba(0,0,0,.35);
     }
@@ -222,7 +221,7 @@
       color: rgba(255,255,255,.88);
     }
 
-    /* 答對頁：改成繽紛聖誕節氛圍，不再整片綠 */
+    /* 答對頁：繽紛聖誕節氛圍 */
     .successHero{
       margin-top: 14px;
       padding: 18px;
@@ -240,8 +239,6 @@
         0 18px 46px rgba(0,0,0,.30),
         0 0 0 1px rgba(255,255,255,.06);
     }
-
-    /* 星點與彩燈質感：低調、但更有節慶設計感 */
     .successHero::before{
       content:"";
       position:absolute;
@@ -275,14 +272,13 @@
       line-height: 1.7;
     }
 
-    /* 成功提示條：保留綠色語意，但更精緻，不會霸佔整體 */
+    /* 成功提示條：綠色語意，但低調精緻 */
     .successBadge{
       margin-top: 12px;
       padding: 10px 12px;
       border-radius: 14px;
       border: 1px solid rgba(0,255,135,.38);
-      background:
-        linear-gradient(180deg, rgba(0,255,135,.14), rgba(0,255,135,.08));
+      background: linear-gradient(180deg, rgba(0,255,135,.14), rgba(0,255,135,.08));
       color: rgba(255,255,255,.90);
       font-size: 13px;
       line-height: 1.6;
@@ -295,7 +291,6 @@
       font-weight: 900;
     }
 
-    /* 成功頁提示詞盒：加一點節慶色 */
     .hintBox.successHint{
       border-color: rgba(255,255,255,.16);
       background:
@@ -411,8 +406,17 @@
   </main>
 
   <script>
-    const HINTS = ["容器", "耶穌", "誕生"];
-    const ANSWER = "馬槽";
+    // 提示詞：顯示中文並註記英文
+    const HINTS = [
+      { zh: "容器", en: "Vessel" },
+      { zh: "耶穌", en: "Jesus" },
+      { zh: "誕生", en: "Birth" }
+    ];
+
+    // 答案：中文或英文皆可
+    const ANSWER_ZH = "馬槽";
+    const ANSWER_EN = "manger";
+
     const STORAGE_KEY = "christmas_quiz_hint_v1";
 
     const screenStart = document.getElementById("screen-start");
@@ -437,19 +441,28 @@
       which.classList.add("active");
     }
 
-    function getOrCreateHint(){
-      let saved = localStorage.getItem(STORAGE_KEY);
-      if (saved && HINTS.includes(saved)) return saved;
+    function getOrCreateHintZh(){
+      const saved = localStorage.getItem(STORAGE_KEY);
 
-      const picked = HINTS[Math.floor(Math.random() * HINTS.length)];
+      // 相容舊版：如果存的是「容器 / 耶穌 / 誕生」，直接沿用
+      if (saved && HINTS.some(h => h.zh === saved)) return saved;
+
+      const picked = HINTS[Math.floor(Math.random() * HINTS.length)].zh;
       localStorage.setItem(STORAGE_KEY, picked);
       return picked;
     }
 
+    function formatHint(zh){
+      const item = HINTS.find(h => h.zh === zh);
+      if (!item) return "—";
+      return `${item.zh}(${item.en})`;
+    }
+
     function renderHint(){
-      const h = localStorage.getItem(STORAGE_KEY) || "—";
-      hintWord.textContent = h;
-      hintWordSuccess.textContent = h;
+      const zh = localStorage.getItem(STORAGE_KEY) || "—";
+      const text = zh === "—" ? "—" : formatHint(zh);
+      hintWord.textContent = text;
+      hintWordSuccess.textContent = text;
     }
 
     function resetUIForQuiz(){
@@ -457,8 +470,25 @@
       input.value = "";
     }
 
+    function isCorrectAnswer(raw){
+      const v = (raw || "").trim();
+      if (!v) return false;
+
+      // 英文判斷：不分大小寫，允許 a/an/the + manger
+      if (/[a-zA-Z]/.test(v)) {
+        let s = v.toLowerCase().trim().replace(/\s+/g, " ");
+        s = s.replace(/^[\.\,\!\?\s]+/, "").replace(/[\.\,\!\?\s]+$/, "");
+        s = s.replace(/^(a|an|the)\s+/, "");
+        return s === ANSWER_EN;
+      }
+
+      // 中文判斷：去空白
+      const zh = v.replace(/\s+/g, "");
+      return zh === ANSWER_ZH;
+    }
+
     btnStart.addEventListener("click", () => {
-      getOrCreateHint();
+      getOrCreateHintZh();
       renderHint();
       resetUIForQuiz();
       showScreen(screenQuiz);
@@ -470,14 +500,11 @@
     });
 
     function submitAnswer(){
-      const value = (input.value || "").trim();
-
-      if (value === ANSWER) {
+      if (isCorrectAnswer(input.value)) {
         renderHint();
         showScreen(screenSuccess);
         return;
       }
-
       msgWrong.style.display = "block";
       input.select();
     }
